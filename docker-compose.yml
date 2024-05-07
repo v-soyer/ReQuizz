@@ -1,14 +1,12 @@
-version: "3.4"
-
 services:
 
   postgres:
-    container_name: boiler_plate_postgres
-    image: postgres:12.14
+    container_name: postgres
+    image: postgres:16.2
     volumes:
       - ./data/postgresql:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5433"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -16,12 +14,12 @@ services:
 
   backend:
     container_name: boiler_plate_nest_app
-    image: boiler_plate_nest_app
     build:
       context: .
+      dockerfile: Dockerfile
       target: app_node
     volumes:
-      - ./:/srv/app
+      - ./:/src/app
     ports:
       - "9229:9229"
       - "8000:8000"
@@ -29,7 +27,7 @@ services:
       - postgres
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://user:password@postgres:5432/database?serverVersion=12.14
+      DATABASE_URL: postgresql://user:password@postgres:5433/database?serverVersion=16.2
       APP_PORT: 8000
       API_DOC: 'TRUE'
       POSTGRES_HOST: postgres
