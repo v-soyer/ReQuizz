@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
       target: app_node
     volumes:
-      - ./:/src/app
+      - ./:/srv/app
     ports:
       - "9229:9229"
       - "8000:8000"
