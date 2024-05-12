@@ -12,16 +12,19 @@ export class QuestionService {
     private readonly httpService: HttpService,
   ) {}
 
-  async getOneQuestionFromOpenTdb() {
+  async getOneQuestionFromOpenTDB(): Promise<Question> {
     const question = await this.httpService.axiosRef.get(
       `https://opentdb.com/api.php?amount=1`,
     );
-    return question.data;
+    return new Question(question.data.results[0]);
   }
 
-  async create(): Promise<any> {
-    const res = await this.getOneQuestionFromOpenTdb();
-    console.log(res);
-    return res;
+  async getById(id: string): Promise<Question> {
+    return await this.questionRepository.getById(id)
+  }
+
+  async create(): Promise<Question> {
+    const question = await this.getOneQuestionFromOpenTDB();
+    return await this.questionRepository.create(question);
   }
 }

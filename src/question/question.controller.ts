@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { QuestionService } from './question.service';
-import { ApiBadRequestResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse } from '@nestjs/swagger';
 import { Question } from './question.entity';
 
 @Controller('question')
@@ -12,8 +12,23 @@ export class QuestionController {
    * Create a new Question
    */
   @Get()
-  @ApiBadRequestResponse({ description: 'incorrect body' })
-  createBusinessRule(): Promise<any> {
+  getQuestionFromOpenTDB(): Promise<Question> {
+    this.logger.verbose(`[GET]/question route processed`);
+    return this.questionService.getOneQuestionFromOpenTDB();
+  }
+
+  @Get('/:id')
+  @ApiOkResponse({
+    type: [Question],
+  })
+  @ApiNotFoundResponse({ description: 'Question is not found'})
+  getQuestionById(@Param('id', ParseUUIDPipe) id: string): Promise<Question> {
+    this.logger.verbose(`[GET]/question/${id} route processed`);
+    return this.questionService.getById(id);
+  }
+
+  @Post()
+  createQuestionFromOpenTDB(): Promise<Question> {
     this.logger.verbose(`[POST]/question route processed`);
     return this.questionService.create();
   }
